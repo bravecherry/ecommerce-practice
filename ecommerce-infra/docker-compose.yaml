@@ -1,9 +1,27 @@
 services:
   db:
     image: postgres
+    restart: unless-stopped
     volumes:
       - ./data/ecommerce-db:/var/lib/postgresql
     ports:
-      - "5433:5432"
+      - '5433:5432'
     environment:
       POSTGRES_PASSWORD: postgrepassword123
+  prometheus:
+    image: prom/prometheus:main
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml.yml:/etc/prometheus.yml/prometheus.yml.yml
+    ports:
+      - '9090:9090'
+  push-gateway:
+    image: prom/pushgateway:master
+    restart: unless-stopped
+    ports:
+      - '9091:9091'
+  grafana:
+    image: grafana/grafana:main
+    restart: unless-stopped
+    ports:
+      - '3000:3000'

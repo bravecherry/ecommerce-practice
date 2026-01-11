@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 //job 실행 시작/종료 확인, 로그에 남는다.
 public class BatchJobExecutionListener implements JobExecutionListener {
 
+    private final CustomPrometheusPushGatewayManager manager;
+
     @Override
     public void beforeJob(JobExecution jobExecution) {
         log.info("listener: beforeJob");
@@ -20,6 +22,8 @@ public class BatchJobExecutionListener implements JobExecutionListener {
     @Override
     public void afterJob(JobExecution jobExecution) {
         log.info("listener: afterJob {}", jobExecution.getExecutionContext());
+
+        manager.pushMetric();
     }
-    
+
 }

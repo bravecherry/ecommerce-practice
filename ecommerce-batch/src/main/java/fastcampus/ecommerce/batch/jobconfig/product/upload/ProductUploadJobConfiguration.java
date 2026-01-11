@@ -18,10 +18,13 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.support.SynchronizedItemStreamReader;
+import org.springframework.batch.item.support.builder.SynchronizedItemStreamReaderBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -44,8 +47,10 @@ public class ProductUploadJobConfiguration {
             BatchStepExecutionListener listen,
             ItemReader<ProductUploadCsvRow> reader,
             ItemProcessor<ProductUploadCsvRow, Product> processor,
-            ItemWriter<Product> writer) {
+            ItemWriter<Product> writer,
+            TaskExecutor taskExecutor) {
         return new StepBuilder("productUploadStep", jobRepository)
+                //chunk 단위로 스레드가 병렬로 실행
                 .<ProductUploadCsvRow, Product>chunk(1000, transactionManager)
                 .reader(reader)
                 .processor(processor)
@@ -54,15 +59,20 @@ public class ProductUploadJobConfiguration {
                 //운영환경에서는 job parameter에서 한번만 돌리고,  오류가 있을때만 따로 돌리게 하기위해 false 설정
                 .allowStartIfComplete(true)
                 .listener(listen)
+                .taskExecutor(taskExecutor)
                 .build();
     }
 
+    //thread-safe 조치
+    // FlatFileItemReader 는 thread-safe한 reader가 아니어서 동시성 문제를 방지하기 위해 수정해줘야 한다
+    //한 스레드가 하나의 파일에 락을 걸고 일정 시간만 점유하도록 설정
+    //FlatFileItemReader > SynchronizedItemStreamReader
     @Bean
     @StepScope
-    public FlatFileItemReader<ProductUploadCsvRow> productUploadItemReader(
+    public SynchronizedItemStreamReader<ProductUploadCsvRow> productUploadItemReader(
             @Value("#{jobParameters['inputFilePath']}") String path
     ) {
-        return new FlatFileItemReaderBuilder<ProductUploadCsvRow>()
+        FlatFileItemReader<ProductUploadCsvRow> reader = new FlatFileItemReaderBuilder<ProductUploadCsvRow>()
                 .name("productReader")
                 .resource(new FileSystemResource(path))
                 .delimited()
@@ -70,6 +80,10 @@ public class ProductUploadJobConfiguration {
                         .toArray(String[]::new))
                 .targetType(ProductUploadCsvRow.class)
                 .linesToSkip(1)
+                .build();
+
+        return new SynchronizedItemStreamReaderBuilder<ProductUploadCsvRow>()
+                .delegate(reader)
                 .build();
     }
 

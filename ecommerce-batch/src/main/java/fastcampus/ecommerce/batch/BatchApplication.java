@@ -20,7 +20,7 @@ public class BatchApplication {
                 .address("localhost:9091")
                 .job("spring-batch")
                 .groupingKey("env", "local")
-                .groupingKey("job_name", "batch_job")
+                .groupingKey("job_name", "product_upload_job")
                 .build();
     }
 

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 //step 실행 시작/종료 확인, 로그에 남는다.
 public class BatchStepExecutionListener implements StepExecutionListener {
 
+    private final CustomPrometheusPushGatewayManager manager;
+
     @Override
     public void beforeStep(StepExecution stepExecution) {
         log.info("before step");
@@ -20,6 +22,7 @@ public class BatchStepExecutionListener implements StepExecutionListener {
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
+        manager.pushMetric();
         log.info("after step - execution context {}", stepExecution.getExecutionContext());
         return ExitStatus.COMPLETED;
     }

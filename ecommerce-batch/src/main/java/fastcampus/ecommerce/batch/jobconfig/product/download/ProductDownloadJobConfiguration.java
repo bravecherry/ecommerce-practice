@@ -29,6 +29,8 @@ public class ProductDownloadJobConfiguration {
     public Step productPagingStep(JobRepository jobRepository, StepExecutionListener listener,
             PlatformTransactionManager transactionManager) {
         return new StepBuilder("productPagingStep", jobRepository)
+                // DataSourceTransactionManager 가 아닌 이를 추상화한 PlatformTransactionManager 인터페이스를 사용하는 이유
+                // 테스트 환경에서 트랜잭션 매니져를 가져올 떄나 실제로 DB에서 가져올 때 모두 동작하게 하기 위함
                 .<Product, Product>chunk(100, transactionManager)
                 .listener(listener)
                 .build();

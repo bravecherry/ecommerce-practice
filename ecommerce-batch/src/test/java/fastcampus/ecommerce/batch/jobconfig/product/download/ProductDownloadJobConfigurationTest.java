@@ -37,8 +37,11 @@ class ProductDownloadJobConfigurationTest extends BaseBatchIntegrationTest {
 
     @Test
     void testJob(@Autowired Job productDownloadJob) throws Exception {
+        // 다운로드 전에 상품이 저장되어 있어야 하기 떄문에 호출
         saveProduct();
 
+        // 저장된 상품들을 파일에 써야 하므로 설정
+        // 임시파일로 지정
         outputFile = FileUtils.createTmpFile("products_downloaded", ".csv");
         JobParameters jobParameters = getJobParameters();
         jobLauncherTestUtils.setJob(productDownloadJob);

@@ -43,7 +43,8 @@ public class ProductDownloadCsvRow {
                 product.getSalesPrice(),
                 product.getStockQuantity(),
                 DateTimeUtils.toString(product.getCreatedAt()),
-                DateTimeUtils.toString(product.getUpdatedAt())
+                product.getUpdatedAt() == null ? null
+                        : DateTimeUtils.toString(product.getUpdatedAt())
         );
     }
 

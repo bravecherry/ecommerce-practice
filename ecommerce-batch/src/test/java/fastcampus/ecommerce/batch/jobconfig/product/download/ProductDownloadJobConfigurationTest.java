@@ -71,9 +71,10 @@ class ProductDownloadJobConfigurationTest extends BaseBatchIntegrationTest {
 
     private JobParameters getJobParameters() throws IOException {
         return new JobParametersBuilder()
-                .addJobParameter("outputFilePath", new JobParameter<>(
-                        outputFile.getPath(), String.class, false))
-                .addJobParameter("gridSize", new JobParameter<>(3, Integer.class, false))
+                .addJobParameter("outputFilePath",
+                        new JobParameter<>(outputFile.getPath(), String.class, false))
+                .addJobParameter("gridSize",
+                        new JobParameter<>(3, Integer.class, false))
                 .toJobParameters();
     }
 

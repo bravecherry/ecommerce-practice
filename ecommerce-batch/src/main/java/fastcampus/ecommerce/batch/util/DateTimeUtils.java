@@ -18,4 +18,9 @@ public class DateTimeUtils {
     public static LocalDateTime toLocalDateTime(String dateTime) {
         return LocalDateTime.parse(dateTime, dateTimeFormatter);
     }
+
+    public static String toString(LocalDateTime dateTime) {
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").format(dateTime);
+    }
+    
 }

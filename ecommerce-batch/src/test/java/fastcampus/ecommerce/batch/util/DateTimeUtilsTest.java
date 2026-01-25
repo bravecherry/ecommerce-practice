@@ -22,4 +22,12 @@ class DateTimeUtilsTest {
         assertThat(result).isEqualTo(LocalDateTime.of(2026, 1, 15,
                 15, 20, 25, 404000000));
     }
+
+    @Test
+    void testLocalDateTimeToString() {
+        LocalDateTime localDateTime = LocalDateTime.of(2026, 1, 25, 16, 56, 27, 0);
+        String result = DateTimeUtils.toString(localDateTime);
+        assertThat(result).isEqualTo("2026-01-25 16:56:27.000");
+    }
+
 }

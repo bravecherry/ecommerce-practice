@@ -1,3 +1,4 @@
 rootProject.name = 'ecommerce-practice'
 include 'ecommerce-batch'
+include 'ecommerce-api'
 

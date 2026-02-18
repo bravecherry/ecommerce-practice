@@ -1,6 +1,7 @@
 package fastcampus.ecommerce.batch.service.product;
 
 import fastcampus.ecommerce.batch.domain.product.Product;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,5 +39,9 @@ public class ProductService {
                 product.getCreatedAt(),
                 product.getUpdatedAt()
         );
+    }
+
+    public List<String> getProductIds() {
+        return jdbcTemplate.queryForList("select product_id from products", String.class);
     }
 }

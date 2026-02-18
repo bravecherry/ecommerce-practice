@@ -1,8 +1,10 @@
 package fastcampus.ecommerce.batch.util;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -72,4 +74,19 @@ public class FileUtils {
         tmpFile.deleteOnExit();
         return tmpFile;
     }
+
+    public static void mergeFiles(String header, List<File> files, File outputFile) {
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(
+                new FileOutputStream(outputFile))) {
+            outputStream.write((header + "\n").getBytes(StandardCharsets.UTF_8));
+            for (File file : files) {
+                System.out.println("merging file: " + file.getName());
+                Files.copy(file.toPath(), outputStream);
+            }
+            
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

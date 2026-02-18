@@ -60,12 +60,13 @@ class ProductDownloadJobConfigurationTest extends BaseBatchIntegrationTest {
                 "1", 56L, "음식/요리", "스니커즈", LocalDate.of(2022, 8, 16), LocalDate.of(2023, 7, 8),
                 "OUT_OF_STOCK", "현대",
                 "삼성전자", 477726, 706, DateTimeUtils.toLocalDateTime("2026-01-15 00:00:00.000"),
-                null
+                DateTimeUtils.toLocalDateTime("2026-01-15 00:00:00.000")
         ));
         productService.save(Product.of(
                 "2", 5L, "IT/기술", "수송기계", LocalDate.of(2022, 9, 14), LocalDate.of(2025, 9, 20),
                 "DISCONTINUED", "네이버", "삼성SDI", 56264, 950,
-                DateTimeUtils.toLocalDateTime("2026-01-15 00:00:00.000"), null
+                DateTimeUtils.toLocalDateTime("2026-01-15 00:00:00.000"),
+                DateTimeUtils.toLocalDateTime("2026-01-15 00:00:00.000")
         ));
     }
 

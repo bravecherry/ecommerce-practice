@@ -44,3 +44,5 @@ bin/
 
 ecommerce-infra/data
 /data/
+
+logs/

@@ -1,4 +1,4 @@
-package fastcampus.ecommerce.api.controller.product.order;
+package fastcampus.ecommerce.api.controller.order;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

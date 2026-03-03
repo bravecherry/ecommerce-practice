@@ -1,4 +1,4 @@
-package fastcampus.ecommerce.api.controller.product.order;
+package fastcampus.ecommerce.api.controller.order;
 
 import fastcampus.ecommerce.api.service.order.OrderService;
 import lombok.RequiredArgsConstructor;

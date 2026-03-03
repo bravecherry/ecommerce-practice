@@ -1,4 +1,4 @@
-package fastcampus.ecommerce.api.controller.product.order;
+package fastcampus.ecommerce.api.controller.order;
 
 import fastcampus.ecommerce.api.domain.order.OrderItemCommand;
 import fastcampus.ecommerce.api.domain.payment.PaymentMethod;

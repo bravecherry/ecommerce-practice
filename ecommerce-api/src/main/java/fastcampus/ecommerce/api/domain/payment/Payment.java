@@ -1,6 +1,6 @@
-package fastcampus.ecommerce.api.domain.product.payment;
+package fastcampus.ecommerce.api.domain.payment;
 
-import fastcampus.ecommerce.api.domain.product.order.Order;
+import fastcampus.ecommerce.api.domain.order.Order;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

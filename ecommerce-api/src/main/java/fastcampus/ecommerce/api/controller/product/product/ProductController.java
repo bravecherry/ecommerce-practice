@@ -1,6 +1,6 @@
-package fastcampus.ecommerce.api.controller;
+package fastcampus.ecommerce.api.controller.product.product;
 
-import fastcampus.ecommerce.api.service.ProductService;
+import fastcampus.ecommerce.api.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

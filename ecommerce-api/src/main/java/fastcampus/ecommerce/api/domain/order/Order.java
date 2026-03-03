@@ -1,8 +1,8 @@
-package fastcampus.ecommerce.api.domain.product.order;
+package fastcampus.ecommerce.api.domain.order;
 
-import fastcampus.ecommerce.api.domain.product.payment.Payment;
-import fastcampus.ecommerce.api.domain.product.payment.PaymentMethod;
-import fastcampus.ecommerce.api.domain.product.payment.PaymentStatus;
+import fastcampus.ecommerce.api.domain.payment.Payment;
+import fastcampus.ecommerce.api.domain.payment.PaymentMethod;
+import fastcampus.ecommerce.api.domain.payment.PaymentStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -103,10 +103,31 @@ public class Order {
         orderStatus = OrderStatus.CANCELLED;
     }
 
-    private Integer calculateTotalAmount() {
+    public Integer calculateTotalAmount() {
         return orderItems.stream()
                 .mapToInt(item -> item.getUnitPrice() * item.getQuantity())
                 .sum();
     }
 
+    public Long countProducts() {
+        return (long) orderItems.size();
+    }
+
+    public Long calculateToTotalItemQuantity() {
+        return orderItems.stream()
+                .mapToLong(OrderItem::getQuantity)
+                .sum();
+    }
+
+    public Long getPaymentId() {
+        return payment == null ? null : payment.getPaymentId();
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return payment == null ? null : payment.getPaymentMethod();
+    }
+
+    public Timestamp getPaymentDate() {
+        return payment == null ? null : payment.getPaymentDate();
+    }
 }

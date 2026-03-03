@@ -4,8 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import fastcampus.ecommerce.api.domain.product.payment.PaymentMethod;
-import fastcampus.ecommerce.api.domain.product.payment.PaymentStatus;
+import fastcampus.ecommerce.api.domain.order.IllegalOrderStateException;
+import fastcampus.ecommerce.api.domain.order.Order;
+import fastcampus.ecommerce.api.domain.order.OrderStatus;
+import fastcampus.ecommerce.api.domain.payment.PaymentMethod;
+import fastcampus.ecommerce.api.domain.payment.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

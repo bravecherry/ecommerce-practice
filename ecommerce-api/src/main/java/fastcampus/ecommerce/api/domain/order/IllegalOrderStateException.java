@@ -1,4 +1,4 @@
-package fastcampus.ecommerce.api.domain.product.order;
+package fastcampus.ecommerce.api.domain.order;
 
 public class IllegalOrderStateException extends RuntimeException {
 

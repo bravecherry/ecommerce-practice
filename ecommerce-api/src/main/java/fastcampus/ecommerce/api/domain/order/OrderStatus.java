@@ -1,4 +1,4 @@
-package fastcampus.ecommerce.api.domain.product.order;
+package fastcampus.ecommerce.api.domain.order;
 
 import lombok.Getter;
 
@@ -9,7 +9,7 @@ public enum OrderStatus {
     COMPLETED("주문 완료"),
     CANCELLED("주문 취소"),
     PENDING_PAYMENT("결제 대기");
-    
+
     final String desc;
 
     OrderStatus(String desc) {

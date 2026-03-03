@@ -1,4 +1,4 @@
-package fastcampus.ecommerce.api.domain.product.order;
+package fastcampus.ecommerce.api.domain.order;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +25,7 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderItemId;
-
+    private Long terms;
     private Integer quantity;
     private Integer unitPrice;
     private String productId;
@@ -37,6 +37,6 @@ public class OrderItem {
 
     public static OrderItem createOrderItem(String productId, Integer quantity, Integer unitPrice,
             Order order) {
-        return new OrderItem(null, quantity, unitPrice, productId, order);
+        return new OrderItem(null, null, quantity, unitPrice, productId, order);
     }
 }

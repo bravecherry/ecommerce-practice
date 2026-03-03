@@ -1,4 +1,4 @@
-package fastcampus.ecommerce.api.service;
+package fastcampus.ecommerce.api.service.product;
 
 import fastcampus.ecommerce.api.domain.product.Product;
 import fastcampus.ecommerce.api.domain.product.ProductStatus;

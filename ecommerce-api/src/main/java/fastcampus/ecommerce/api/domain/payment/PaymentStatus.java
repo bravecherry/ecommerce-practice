@@ -1,4 +1,4 @@
-package fastcampus.ecommerce.api.domain.product.payment;
+package fastcampus.ecommerce.api.domain.payment;
 
 import lombok.Getter;
 

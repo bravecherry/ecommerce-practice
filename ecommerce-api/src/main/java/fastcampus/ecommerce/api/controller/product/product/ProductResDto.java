@@ -1,7 +1,7 @@
-package fastcampus.ecommerce.api.controller;
+package fastcampus.ecommerce.api.controller.product.product;
 
 import fastcampus.ecommerce.api.domain.product.ProductStatus;
-import fastcampus.ecommerce.api.service.ProductDto;
+import fastcampus.ecommerce.api.service.product.ProductDto;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import java.time.LocalDate;

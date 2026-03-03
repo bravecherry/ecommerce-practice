@@ -50,7 +50,7 @@ public class Order {
 
     public static Order createOrder(Long customerId) {
         return new Order(null, new Timestamp(System.currentTimeMillis()), customerId,
-                OrderStatus.PENDING_PAYMENT, new ArrayList<>(), null);
+            OrderStatus.PENDING_PAYMENT, new ArrayList<>(), null);
     }
 
     //생성과 관련된 로직이므로 테스트는 스킵하도록 한다,
@@ -85,7 +85,7 @@ public class Order {
         return payment.isSuccess();
     }
 
-    public void complete() {
+    public void completeOrder() {
         if (orderStatus != OrderStatus.PROCESSING) {
             throw new IllegalOrderStateException("처리 중인 주문만 완료 가능합니다.");
         }
@@ -105,8 +105,8 @@ public class Order {
 
     public Integer calculateTotalAmount() {
         return orderItems.stream()
-                .mapToInt(item -> item.getUnitPrice() * item.getQuantity())
-                .sum();
+            .mapToInt(item -> item.getUnitPrice() * item.getQuantity())
+            .sum();
     }
 
     public Long countProducts() {
@@ -115,8 +115,8 @@ public class Order {
 
     public Long calculateToTotalItemQuantity() {
         return orderItems.stream()
-                .mapToLong(OrderItem::getQuantity)
-                .sum();
+            .mapToLong(OrderItem::getQuantity)
+            .sum();
     }
 
     public Long getPaymentId() {

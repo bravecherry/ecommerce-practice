@@ -22,12 +22,12 @@ public class OrderService {
 
     @Transactional
     public OrderResult order(Long customerId, List<OrderItemCommand> orderItems,
-            PaymentMethod paymentMethod) {
+        PaymentMethod paymentMethod) {
         Order order = Order.createOrder(customerId);
         for (OrderItemCommand orderItem : orderItems) {
             ProductDto dto = productService.findProduct(orderItem.getProductId());
             order.addOrderItem(dto.getProductId(), orderItem.getQuantity(),
-                    orderItem.getUnitPrice());
+                orderItem.getUnitPrice());
         }
         order.initPayment(paymentMethod);
         return save(order);
@@ -35,11 +35,36 @@ public class OrderService {
 
     @Transactional
     public OrderResult completePayment(Long orderId, boolean success) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException(orderId));
+        Order order = getOrder(orderId);
         order.completePayment(success);
         decreaseStock(success, order);
         return save(order);
+    }
+
+    @Transactional
+    public OrderResult completeOrder(Long orderId) {
+        Order order = getOrder(orderId);
+        order.completeOrder();
+        return save(order);
+    }
+
+    @Transactional
+    public OrderResult cancelOrder(Long orderId) {
+        Order order = getOrder(orderId);
+        order.cancel();
+        increaseStock(order);
+        return save(order);
+    }
+
+    private void increaseStock(Order order) {
+        for (OrderItem orderItem : order.getOrderItems()) {
+            productService.increaseStock(orderItem.getProductId(), orderItem.getQuantity());
+        }
+    }
+
+    private Order getOrder(Long orderId) {
+        return orderRepository.findById(orderId)
+            .orElseThrow(() -> new OrderNotFoundException(orderId));
     }
 
     private void decreaseStock(boolean success, Order order) {

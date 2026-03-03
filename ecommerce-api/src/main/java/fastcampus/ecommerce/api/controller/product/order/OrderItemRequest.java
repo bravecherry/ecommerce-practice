@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 public class OrderItemRequest {
 
     private Integer quantity;
+    private Integer unit;
     private String productId;
-    private String unit;
 
-    public static OrderItemRequest of(Integer quantity, String productId, String unit) {
-        return new OrderItemRequest(quantity, productId, unit);
+    public static OrderItemRequest of(Integer quantity, Integer unit, String productId) {
+        return new OrderItemRequest(quantity, unit, productId);
     }
 
 }

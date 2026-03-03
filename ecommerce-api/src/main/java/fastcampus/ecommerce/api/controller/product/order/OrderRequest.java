@@ -18,23 +18,15 @@ public class OrderRequest {
     private List<OrderItemRequest> orderItems;
     private PaymentMethod paymentMethod;
 
-    public OrderRequest(Long customerId, List<OrderItemRequest> orderItems) {
-        this.customerId = customerId;
-        this.orderItems = orderItems;
-        this.paymentMethod = PaymentMethod.PAYPAL;
-    }
-
-    public List<OrderItemRequest> getOrderItemCommands() {
-        return orderItems.stream().map(
-                        item -> OrderItemCommand.of(
-                                item.getQuantity(), item.getUnit(), item.getQuantity()))
-                .collect(Collectors.toList());
+    public static OrderRequest of(Long customerId, List<OrderItemRequest> orderItems,
+        PaymentMethod paymentMethod) {
+        return new OrderRequest(customerId, orderItems, paymentMethod);
     }
 
     public List<OrderItemCommand> toOrderItemCommands() {
         return orderItems.stream()
-                .map(item -> new OrderItemCommand(item.getProductId(), item.getQuantity()))
-                .collect(Collectors.toList());
-        ;
+            .map(item -> OrderItemCommand.of(item.getQuantity(), item.getUnit(),
+                item.getProductId()))
+            .collect(Collectors.toList());
     }
 }

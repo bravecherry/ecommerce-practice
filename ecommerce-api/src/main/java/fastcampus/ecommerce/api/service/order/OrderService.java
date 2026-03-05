@@ -26,8 +26,7 @@ public class OrderService {
         Order order = Order.createOrder(customerId);
         for (OrderItemCommand orderItem : orderItems) {
             ProductDto dto = productService.findProduct(orderItem.getProductId());
-            order.addOrderItem(dto.getProductId(), orderItem.getQuantity(),
-                orderItem.getUnitPrice());
+            order.addOrderItem(dto.getProductId(), orderItem.getQuantity(), dto.getSalesPrice());
         }
         order.initPayment(paymentMethod);
         return save(order);

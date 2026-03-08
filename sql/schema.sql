@@ -56,3 +56,17 @@ create table order_items
 
 create index idx_order_items_order_id on order_items (order_id);
 create index idx_order_items_product_id on order_items (product_id);
+
+create table transaction_reports
+(
+    transaction_date     date,
+    transaction_type     varchar(50)    not null,
+    transaction_count    bigint         not null,
+    total_amount         bigint         not null,
+    customer_count       bigint         not null,
+    order_count          bigint         not null,
+    payment_method_count bigint         not null,
+    avg_product_count    decimal(15, 0) not null,
+    total_item_quantity  bigint         not null,
+    primary key (transaction_date, transaction_type)
+);

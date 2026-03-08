@@ -9,6 +9,11 @@ jar {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Source: https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-json-classic
+    implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
+
+    // Source: https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-jackson
+    implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
 }
 
 test {

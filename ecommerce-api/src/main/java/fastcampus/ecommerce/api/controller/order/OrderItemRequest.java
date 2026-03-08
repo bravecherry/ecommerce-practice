@@ -1,4 +1,4 @@
-package fastcampus.ecommerce.api.controller.product.order;
+package fastcampus.ecommerce.api.controller.order;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrderItemRequest {
 
-    private Integer quantity;
     private String productId;
-    private String unit;
+    private Integer quantity;
 
-    public static OrderItemRequest of(Integer quantity, String productId, String unit) {
-        return new OrderItemRequest(quantity, productId, unit);
+    public static OrderItemRequest of(String productId, Integer quantity) {
+        return new OrderItemRequest(productId, quantity);
     }
+
 
 }

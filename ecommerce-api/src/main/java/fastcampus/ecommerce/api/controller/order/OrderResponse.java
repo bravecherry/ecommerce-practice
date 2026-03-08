@@ -1,4 +1,4 @@
-package fastcampus.ecommerce.api.controller.product.order;
+package fastcampus.ecommerce.api.controller.order;
 
 import fastcampus.ecommerce.api.domain.order.OrderItemResponse;
 import fastcampus.ecommerce.api.domain.order.OrderResult;
@@ -34,18 +34,18 @@ public class OrderResponse {
 
     public static OrderResponse from(OrderResult result) {
         return new OrderResponse(
-                result.getOrderId(), result.getOrderDate(),
-                result.getCustomerId(), result.getOrderStatus(),
-                result.getOrderItems().stream()
-                        .map(OrderItemResponse::of)
-                        .collect(Collectors.toList()),
-                result.getProductCount(),
-                result.getTotalItemQuantity(),
-                result.getPaymentId(), //메소드 체이닝 우회
-                result.getPaymentMethod(),
-                result.getPaymentStatus(),
-                result.getPaymentDate(),
-                result.getTotalAmount(),
-                result.isPaymentSuccess());
+            result.getOrderId(), result.getOrderDate(),
+            result.getCustomerId(), result.getOrderStatus(),
+            result.getOrderItems().stream()
+                .map(OrderItemResponse::of)
+                .collect(Collectors.toList()),
+            result.getProductCount(),
+            result.getTotalItemQuantity(),
+            result.getPaymentId(), //메소드 체이닝 우회
+            result.getPaymentMethod(),
+            result.getPaymentStatus(),
+            result.getPaymentDate(),
+            result.getTotalAmount(),
+            result.isPaymentSuccess());
     }
 }

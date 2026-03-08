@@ -45,7 +45,7 @@ public class Order {
     @Setter(AccessLevel.NONE)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(mappedBy = "payment", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 
     public static Order createOrder(Long customerId) {

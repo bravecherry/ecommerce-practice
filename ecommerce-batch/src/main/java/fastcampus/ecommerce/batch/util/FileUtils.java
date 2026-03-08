@@ -17,20 +17,51 @@ import lombok.extern.slf4j.Slf4j;
 public class FileUtils {
 
     public static List<File> splitCsv(File csvFile, int fileCount) {
+        return splitFileAfterLineCount(csvFile, fileCount, true, ".csv");
+    }
+
+    public static File createTmpFile(String prefix, String suffix) throws IOException {
+        File tmpFile = File.createTempFile(prefix, suffix);
+        //JVM 삭제 시 임시 파일도 함께 삭제
+        tmpFile.deleteOnExit();
+        return tmpFile;
+    }
+
+    public static void mergeFiles(String header, List<File> files, File outputFile) {
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(
+            new FileOutputStream(outputFile))) {
+            outputStream.write((header + "\n").getBytes(StandardCharsets.UTF_8));
+            for (File file : files) {
+                System.out.println("merging file: " + file.getName());
+                Files.copy(file.toPath(), outputStream);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<File> splitLog(File csvFile, int fileCount) {
+        return splitFileAfterLineCount(csvFile, fileCount, false, ".log");
+    }
+
+    private static List<File> splitFileAfterLineCount(File csvFile, int fileCount,
+        boolean ignoreFirstLine, String suffix) {
         long lineCount;
         try (Stream<String> stream = Files.lines(csvFile.toPath(), StandardCharsets.UTF_8)) {
             lineCount = stream.count();
-            long linesPerFile = (long) Math.ceil((double) lineCount / fileCount);
-            return splitFiles(csvFile, linesPerFile);
+            return splitFiles(csvFile, (long) Math.ceil((double) lineCount / fileCount),
+                ignoreFirstLine, suffix);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static List<File> splitFiles(File csvFile, long linesPerFile) {
+    private static List<File> splitFiles(File csvFile, long linesPerFile, boolean ignoreFirstLine,
+        String suffix) {
         List<File> splitFiles = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(csvFile.toPath(),
-                StandardCharsets.UTF_8)) {
+            StandardCharsets.UTF_8)) {
             String line;
             boolean firstLine = true;
             boolean shouldCreateFile = true;
@@ -39,12 +70,12 @@ public class FileUtils {
             File splitFile;
             BufferedWriter writer = null;
             while ((line = reader.readLine()) != null) {
-                if (firstLine) {
+                if (ignoreFirstLine && firstLine) {
                     firstLine = false;
                     continue;
                 }
                 if (shouldCreateFile) {
-                    splitFile = createTmpFile("split_" + (fileIndex++) + "_", ".csv");
+                    splitFile = createTmpFile("split_" + (fileIndex++) + "_", suffix);
                     writer = Files.newBufferedWriter(splitFile.toPath(), StandardCharsets.UTF_8);
                     splitFiles.add(splitFile);
                     lineCount = 0;
@@ -66,27 +97,6 @@ public class FileUtils {
             throw new RuntimeException(e);
         }
         return splitFiles;
-    }
-
-    public static File createTmpFile(String prefix, String suffix) throws IOException {
-        File tmpFile = File.createTempFile(prefix, suffix);
-        //JVM 삭제 시 임시 파일도 함께 삭제
-        tmpFile.deleteOnExit();
-        return tmpFile;
-    }
-
-    public static void mergeFiles(String header, List<File> files, File outputFile) {
-        try (BufferedOutputStream outputStream = new BufferedOutputStream(
-                new FileOutputStream(outputFile))) {
-            outputStream.write((header + "\n").getBytes(StandardCharsets.UTF_8));
-            for (File file : files) {
-                System.out.println("merging file: " + file.getName());
-                Files.copy(file.toPath(), outputStream);
-            }
-            
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }

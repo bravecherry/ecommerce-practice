@@ -27,6 +27,7 @@ class TransactionReportJobConfigurationTest extends BaseBatchIntegrationTest {
         JobParameters jobParameters = new JobParametersBuilder()
             .addJobParameter("inputFilePath",
                 new JobParameter<>(resource.getFile().getPath(), String.class, false))
+            .addJobParameter("gridSize", new JobParameter<>(3, Integer.class, false))
             .toJobParameters();
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 

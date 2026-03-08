@@ -1,5 +1,6 @@
 package fastcampus.ecommerce.batch;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.prometheus.metrics.exporter.pushgateway.PushGateway;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,11 +18,11 @@ public class BatchApplication {
     @Bean
     public PushGateway pushGateway() {
         return PushGateway.builder()
-                .address("localhost:9091")
-                .job("spring-batch")
-                .groupingKey("env", "local")
-                .groupingKey("job_name", "product_upload_job")
-                .build();
+            .address("localhost:9091")
+            .job("spring-batch")
+            .groupingKey("env", "local")
+            .groupingKey("job_name", "product_upload_job")
+            .build();
     }
 
     @Bean
@@ -43,4 +44,9 @@ public class BatchApplication {
         return executor;
     }
 
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+    
 }

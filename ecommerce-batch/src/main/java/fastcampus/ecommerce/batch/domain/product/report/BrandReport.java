@@ -14,7 +14,7 @@ public class BrandReport {
 
     private LocalDate statDate = LocalDate.now();// 배치가 실행된 날짜
     private String brand;
-    private Integer productCount;
+    private Long productCount;
     private BigDecimal avgSalesPrice;
     private BigDecimal maxSalesPrice;
     private BigDecimal minSalesPrice;

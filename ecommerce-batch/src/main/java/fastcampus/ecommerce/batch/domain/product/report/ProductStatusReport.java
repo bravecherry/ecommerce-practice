@@ -15,6 +15,6 @@ public class ProductStatusReport {
     // 배치가 실행된 날짜
     private LocalDate statDate = LocalDate.now();
     private String productStatus;
-    private Integer productCount;
+    private Long productCount;
     private BigDecimal avgStockQuantity;
 }

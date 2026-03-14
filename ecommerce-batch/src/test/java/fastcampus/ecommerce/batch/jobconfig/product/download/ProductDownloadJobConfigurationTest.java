@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import fastcampus.ecommerce.batch.BaseBatchIntegrationTest;
 import fastcampus.ecommerce.batch.domain.product.Product;
+import fastcampus.ecommerce.batch.domain.product.ProductStatus;
 import fastcampus.ecommerce.batch.service.product.ProductService;
 import fastcampus.ecommerce.batch.util.DateTimeUtils;
 import fastcampus.ecommerce.batch.util.FileUtils;
@@ -45,7 +46,6 @@ class ProductDownloadJobConfigurationTest extends BaseBatchIntegrationTest {
         outputFile = FileUtils.createTmpFile("products_downloaded", ".csv");
         JobParameters jobParameters = getJobParameters();
         jobLauncherTestUtils.setJob(productDownloadJob);
-
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
         assertAll(
@@ -58,13 +58,13 @@ class ProductDownloadJobConfigurationTest extends BaseBatchIntegrationTest {
     private void saveProducts() {
         productService.save(Product.of(
             "1", 56L, "음식/요리", "스니커즈", LocalDate.of(2022, 8, 16), LocalDate.of(2023, 7, 8),
-            "OUT_OF_STOCK", "현대",
+            ProductStatus.OUT_OF_STOCK, "현대",
             "삼성전자", 477726, 706, DateTimeUtils.toLocalDateTime("2026-01-15 00:00:00.000"),
             DateTimeUtils.toLocalDateTime("2026-01-15 00:00:00.000")
         ));
         productService.save(Product.of(
             "2", 5L, "IT/기술", "수송기계", LocalDate.of(2022, 9, 14), LocalDate.of(2025, 9, 20),
-            "DISCONTINUED", "네이버", "삼성SDI", 56264, 950,
+            ProductStatus.DISCONTINUED, "네이버", "삼성SDI", 56264, 950,
             DateTimeUtils.toLocalDateTime("2026-01-15 00:00:00.000"),
             DateTimeUtils.toLocalDateTime("2026-01-15 00:00:00.000")
         ));

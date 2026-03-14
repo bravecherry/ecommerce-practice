@@ -1,24 +1,42 @@
 package fastcampus.ecommerce.batch.domain.product.report;
 
-import java.math.BigDecimal;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDate;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// 만약 재처리가 가능하게 하려면 일별로 재품에 대한 스냅샷을 떠서 저장해두어야 한다.
+@Entity
+@Table(name = "brand_reports")
 @Getter
 @Setter
-@NoArgsConstructor
-public class BrandReport {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@IdClass(BrandReportId.class)
+public class BrandReport implements Serializable {
 
-    private LocalDate statDate = LocalDate.now();// 배치가 실행된 날짜
+    @Id
+    private LocalDate statDate;
+    @Id
     private String brand;
     private Long productCount;
-    private BigDecimal avgSalesPrice;
-    private BigDecimal maxSalesPrice;
-    private BigDecimal minSalesPrice;
-    private Integer totalStockQuantity;// 전체 재고량
-    private BigDecimal avgStockQuantity;
-    private BigDecimal potentialSalesAmount;
+    private Double avgSalesPrice;
+    private Integer maxSalesPrice;
+    private Integer minSalesPrice;
+    private Long totalStockQuantity;
+    private Double avgStockQuantity;
+    private Long potentialSalesAmount;
+
+    public BrandReport(String brand, Long productCount, Double avgSalesPrice,
+        Integer maxSalesPrice, Integer minSalesPrice, Long totalStockQuantity,
+        Double avgStockQuantity, Long potentialSalesAmount) {
+        this(LocalDate.now(), brand, productCount, avgSalesPrice, maxSalesPrice, minSalesPrice,
+            totalStockQuantity, avgStockQuantity, potentialSalesAmount);
+    }
 }

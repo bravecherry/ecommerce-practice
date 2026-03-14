@@ -6,10 +6,10 @@ import fastcampus.ecommerce.batch.dto.product.download.ProductDownloadCsvRow;
 import fastcampus.ecommerce.batch.service.product.ProductDownloadPartitioner;
 import fastcampus.ecommerce.batch.util.FileUtils;
 import fastcampus.ecommerce.batch.util.ReflectionUtils;
+import jakarta.persistence.EntityManagerFactory;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import javax.sql.DataSource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
@@ -25,10 +25,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.database.PagingQueryProvider;
-import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
-import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.batch.item.support.SynchronizedItemStreamWriter;
@@ -47,31 +45,31 @@ public class ProductDownloadJobConfiguration {
     // products 데이터가 많으므로 chunk 단위로 나눠서 데이터를 읽어온 다음 파일에 저장
     @Bean
     public Job productDownloadJob(JobRepository jobRepository, Step productPagingStep,
-            JobExecutionListener listener, Step productDownloadPartitionStep,
-            Step productFileMergeStep) {
+        JobExecutionListener listener, Step productDownloadPartitionStep,
+        Step productFileMergeStep) {
         return new JobBuilder("productDownloadJob", jobRepository)
 //                .start(productPagingStep)
-                .start(productDownloadPartitionStep)
-                .next(productFileMergeStep)
-                .listener(listener)
-                .build();
+            .start(productDownloadPartitionStep)
+            .next(productFileMergeStep)
+            .listener(listener)
+            .build();
     }
 
     @Bean
     Step productDownloadPartitionStep(PartitionHandler productDownloadPartitionHandler,
-            Step productPagingStep, JobRepository jobRepository,
-            ProductDownloadPartitioner productDownloadPartitioner) {
+        Step productPagingStep, JobRepository jobRepository,
+        ProductDownloadPartitioner productDownloadPartitioner) {
         return new StepBuilder("productDownloadPartitionStep", jobRepository)
-                .partitioner(productPagingStep.getName(), productDownloadPartitioner)
-                .partitionHandler(productDownloadPartitionHandler)
-                .allowStartIfComplete(true)
-                .build();
+            .partitioner(productPagingStep.getName(), productDownloadPartitioner)
+            .partitionHandler(productDownloadPartitionHandler)
+            .allowStartIfComplete(true)
+            .build();
     }
 
     @Bean
     @JobScope
     public TaskExecutorPartitionHandler productDownloadPartitionHandler(TaskExecutor taskExecutor,
-            Step productPagingStep, @Value("#{jobParameters['gridSize']}") int gridSize) {
+        Step productPagingStep, @Value("#{jobParameters['gridSize']}") int gridSize) {
         TaskExecutorPartitionHandler handler = new TaskExecutorPartitionHandler();
         handler.setTaskExecutor(taskExecutor);
         handler.setStep(productPagingStep);
@@ -81,50 +79,36 @@ public class ProductDownloadJobConfiguration {
 
     @Bean
     public Step productPagingStep(JobRepository jobRepository, StepExecutionListener listener,
-            PlatformTransactionManager transactionManager,
-            ItemReader<Product> productPagingReader,
-            ItemProcessor<Product, ProductDownloadCsvRow> productDownloadProcessor,
-            ItemWriter<ProductDownloadCsvRow> productCsvWriter, TaskExecutor taskExecutor) {
+        PlatformTransactionManager transactionManager,
+        ItemReader<Product> productPagingReader,
+        ItemProcessor<Product, ProductDownloadCsvRow> productDownloadProcessor,
+        ItemWriter<ProductDownloadCsvRow> productCsvWriter, TaskExecutor taskExecutor) {
         return new StepBuilder("productPagingStep", jobRepository)
-                // DataSourceTransactionManager 가 아닌 이를 추상화한 PlatformTransactionManager 인터페이스를 사용하는 이유
-                // 테스트 환경에서 트랜잭션 매니져를 가져올 떄나 실제로 DB에서 가져올 때 모두 동작하게 하기 위함
-                .<Product, ProductDownloadCsvRow>chunk(10000, transactionManager)
-                .reader(productPagingReader)
-                .processor(productDownloadProcessor)
-                .writer(productCsvWriter)
-                .listener(listener)
-                .taskExecutor(taskExecutor)
-                .build();
+            // DataSourceTransactionManager 가 아닌 이를 추상화한 PlatformTransactionManager 인터페이스를 사용하는 이유
+            // 테스트 환경에서 트랜잭션 매니져를 가져올 떄나 실제로 DB에서 가져올 때 모두 동작하게 하기 위함
+            .<Product, ProductDownloadCsvRow>chunk(100000, transactionManager)
+            .reader(productPagingReader)
+            .processor(productDownloadProcessor)
+            .writer(productCsvWriter)
+            .listener(listener)
+            .taskExecutor(taskExecutor)
+            .build();
     }
 
     @Bean
     @StepScope
-    public JdbcPagingItemReader<Product> productPagingReader(
-            @Value("#{stepExecutionContext['minId']}") String minId,
-            @Value("#{stepExecutionContext['maxId']}") String maxId,
-            DataSource dataSource,
-            PagingQueryProvider productPagingQueryProvider) {
-        return new JdbcPagingItemReaderBuilder<Product>()
-                .dataSource(dataSource)
-                .name("productPagingReader")
-                .queryProvider(productPagingQueryProvider)
-                .parameterValues(Map.of("minId", minId, "maxId", maxId))
-                .pageSize(1000)
-                .beanRowMapper(Product.class)
-                .build();
-    }
-
-    @Bean
-    public SqlPagingQueryProviderFactoryBean productPagingQueryProvider(DataSource dataSource) {
-        SqlPagingQueryProviderFactoryBean provider = new SqlPagingQueryProviderFactoryBean();
-        provider.setSelectClause("select product_id, seller_id, category, product_name, "
-                + "sales_start_date, sales_end_date, product_status, brand, manufacturer, "
-                + "sales_price, stock_quantity, created_at, updated_at");
-        provider.setFromClause("from products");
-        provider.setSortKey("product_id");
-        provider.setWhereClause("product_id >= :minId and product_id <= :maxId");
-        provider.setDataSource(dataSource);
-        return provider;
+    public JpaPagingItemReader<Product> productPagingReader(
+        @Value("#{stepExecutionContext['minId']}") String minId,
+        @Value("#{stepExecutionContext['maxId']}") String maxId,
+        EntityManagerFactory factory) {
+        return new JpaPagingItemReaderBuilder<Product>()
+            .name("productPagingReader")
+            .entityManagerFactory(factory)
+            .queryString(
+                "select p from Product p where p.productId between :minId and :maxId order by p.productId")
+            .parameterValues(Map.of("minId", minId, "maxId", maxId))
+            .pageSize(10000)
+            .build();
     }
 
     @Bean
@@ -135,42 +119,42 @@ public class ProductDownloadJobConfiguration {
     @Bean
     @StepScope
     public SynchronizedItemStreamWriter<ProductDownloadCsvRow> productCsvWriter(
-            @Value("#{stepExecutionContext['file']}") File file) {
+        @Value("#{stepExecutionContext['file']}") File file) {
         List<String> columns = ReflectionUtils.getFieldNames(ProductDownloadCsvRow.class);
         FlatFileItemWriter<ProductDownloadCsvRow> productCsvWriter = new FlatFileItemWriterBuilder<ProductDownloadCsvRow>()
-                .name("productCsvWriter")
-                .resource(new FileSystemResource(file))
-                .delimited()
-                .names(columns.toArray(String[]::new))
+            .name("productCsvWriter")
+            .resource(new FileSystemResource(file))
+            .delimited()
+            .names(columns.toArray(String[]::new))
 //                .headerCallback(writer -> writer.write(String.join(",", columns)))
-                .build();
+            .build();
 
         return new SynchronizedItemStreamWriterBuilder<ProductDownloadCsvRow>()
-                .delegate(productCsvWriter)
-                .build();
+            .delegate(productCsvWriter)
+            .build();
     }
 
     @Bean
     public Step productFileMergeStep(JobRepository jobRepository,
-            PlatformTransactionManager transactionManager, Tasklet productFileMergeTasklet,
-            StepExecutionListener stepExecutionListener) {
+        PlatformTransactionManager transactionManager, Tasklet productFileMergeTasklet,
+        StepExecutionListener stepExecutionListener) {
         return new StepBuilder("productFileMergeStep", jobRepository)
-                .tasklet(productFileMergeTasklet, transactionManager)
-                .allowStartIfComplete(true)
-                .listener(stepExecutionListener)
-                .build();
+            .tasklet(productFileMergeTasklet, transactionManager)
+            .allowStartIfComplete(true)
+            .listener(stepExecutionListener)
+            .build();
     }
 
     @Bean
     @JobScope
     public Tasklet productFileMergeTasklet(
-            @Value("#{jobParameters['outputFilePath']}") String path,
-            PartitionedFileRepository repository) {
+        @Value("#{jobParameters['outputFilePath']}") String path,
+        PartitionedFileRepository repository) {
         return (contribution, chunkContext) -> {
             FileUtils.mergeFiles(
-                    String.join(",", ReflectionUtils.getFieldNames(ProductDownloadCsvRow.class)),
-                    repository.getFiles(),
-                    new File(path)
+                String.join(",", ReflectionUtils.getFieldNames(ProductDownloadCsvRow.class)),
+                repository.getFiles(),
+                new File(path)
             );
             return RepeatStatus.FINISHED;
         };

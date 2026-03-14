@@ -31,20 +31,20 @@ public class ProductDownloadCsvRow {
 
     public static ProductDownloadCsvRow from(Product product) {
         return new ProductDownloadCsvRow(
-                product.getProductId(),
-                product.getSellerId(),
-                product.getCategory(),
-                product.getProductName(),
-                product.getSalesStartDate().toString(),
-                product.getSalesEndDate().toString(),
-                product.getProductStatus(),
-                product.getBrand(),
-                product.getManufacturer(),
-                product.getSalesPrice(),
-                product.getStockQuantity(),
-                DateTimeUtils.toString(product.getCreatedAt()),
-                product.getUpdatedAt() == null ? null
-                        : DateTimeUtils.toString(product.getUpdatedAt())
+            product.getProductId(),
+            product.getSellerId(),
+            product.getCategory(),
+            product.getProductName(),
+            product.getSalesStartDate().toString(),
+            product.getSalesEndDate().toString(),
+            product.getProductStatus().name(),
+            product.getBrand(),
+            product.getManufacturer(),
+            product.getSalesPrice(),
+            product.getStockQuantity(),
+            DateTimeUtils.toString(product.getCreatedAt()),
+            product.getUpdatedAt() == null ? null
+                : DateTimeUtils.toString(product.getUpdatedAt())
         );
     }
 

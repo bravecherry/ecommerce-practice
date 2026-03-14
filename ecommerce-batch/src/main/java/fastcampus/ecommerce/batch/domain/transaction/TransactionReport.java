@@ -2,6 +2,10 @@ package fastcampus.ecommerce.batch.domain.transaction;
 
 import fastcampus.ecommerce.batch.dto.transaction.TransactionLog;
 import fastcampus.ecommerce.batch.util.DateTimeUtils;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,13 +17,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Entity
+@Table(name = "transaction_reports")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@IdClass(TransactionReportId.class)
 public class TransactionReport {
 
-    // ID
+    @Id
     private LocalDate transactionDate;
+    @Id
     private String transactionType;
 
     private Long transactionCount;

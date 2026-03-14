@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import fastcampus.ecommerce.batch.BaseBatchIntegrationTest;
+import fastcampus.ecommerce.batch.domain.transaction.TransactionReportRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -21,6 +22,9 @@ class TransactionReportJobConfigurationTest extends BaseBatchIntegrationTest {
     @Value("classpath:/logs/transaction.log")
     private Resource resource;
 
+    @Autowired
+    private TransactionReportRepository transactionReportRepository;
+
     @Test
     void testJob(@Autowired Job transactionReportJob) throws Exception {
         jobLauncherTestUtils.setJob(transactionReportJob);
@@ -32,9 +36,7 @@ class TransactionReportJobConfigurationTest extends BaseBatchIntegrationTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
         assertAll(
-            () -> assertThat(jdbcTemplate.queryForObject(
-                "select count(*) from transaction_reports", Integer.class))
-                .isEqualTo(3),
+            () -> assertThat(transactionReportRepository.count()).isEqualTo(3),
             () -> assertJobCompleted(jobExecution)
         );
     }

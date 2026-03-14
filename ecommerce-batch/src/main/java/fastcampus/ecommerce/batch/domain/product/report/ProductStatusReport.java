@@ -1,20 +1,38 @@
 package fastcampus.ecommerce.batch.domain.product.report;
 
-import java.math.BigDecimal;
+import fastcampus.ecommerce.batch.domain.product.ProductStatus;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// 만약 재처리가 가능하게 하려면 일별로 재품에 대한 스냅샷을 떠서 저장해두어야 한다.
+@Entity
+@Table(name = "product_status_reports")
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@IdClass(ProductStatusReportId.class)
 public class ProductStatusReport {
 
-    // 배치가 실행된 날짜
-    private LocalDate statDate = LocalDate.now();
-    private String productStatus;
+    @Id
+    private LocalDate statDate;
+    @Id
+    @Enumerated(EnumType.STRING)
+    private ProductStatus productStatus;
     private Long productCount;
-    private BigDecimal avgStockQuantity;
+    private Double avgStockQuantity;
+
+    public ProductStatusReport(ProductStatus productStatus, Long productCount,
+        Double avgStockQuantity) {
+        this(LocalDate.now(), productStatus, productCount, avgStockQuantity);
+    }
 }

@@ -7,8 +7,8 @@ import fastcampus.ecommerce.batch.dto.transaction.TransactionLog;
 import fastcampus.ecommerce.batch.service.file.SplitFilePartitioner;
 import fastcampus.ecommerce.batch.service.transaction.TransactionReportAccumulator;
 import fastcampus.ecommerce.batch.util.FileUtils;
+import jakarta.persistence.EntityManagerFactory;
 import java.io.File;
-import javax.sql.DataSource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
@@ -22,8 +22,8 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.batch.item.database.JpaItemWriter;
+import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.support.IteratorItemReader;
@@ -158,18 +158,10 @@ public class TransactionReportJobConfiguration {
 
     @Bean
     @StepScope
-    public JdbcBatchItemWriter<TransactionReport> reportWriter(DataSource dataSource) {
-        String sql = "insert into transaction_reports ("
-            + "transaction_date, transaction_type, transaction_count, total_amount, "
-            + "customer_count, order_count, payment_method_count, avg_product_count, "
-            + "total_item_quantity) values ("
-            + ":transactionDate, :transactionType, :transactionCount, :totalAmount, "
-            + ":customerCount, :orderCount, :paymentMethodCount, :avgProductCount, "
-            + ":totalItemQuantity)";
-        return new JdbcBatchItemWriterBuilder<TransactionReport>()
-            .dataSource(dataSource)
-            .sql(sql)
-            .beanMapped()
+    public JpaItemWriter<TransactionReport> reportWriter(EntityManagerFactory factory) {
+        return new JpaItemWriterBuilder<TransactionReport>()
+            .entityManagerFactory(factory)
+            .usePersist(true)
             .build();
     }
 

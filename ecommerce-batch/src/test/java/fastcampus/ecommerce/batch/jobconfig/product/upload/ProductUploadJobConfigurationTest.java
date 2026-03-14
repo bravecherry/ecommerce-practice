@@ -32,20 +32,19 @@ class ProductUploadJobConfigurationTest extends BaseBatchIntegrationTest {
         JobParameters jobParameters = getJobParameters();
         jobLauncherTestUtils.setJob(productUploadJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
-
         Long count = productService.countProducts();
 
         assertAll(
-                () -> assertEquals(count, 9L),
-                () -> assertJobCompleted(jobExecution)
+            () -> assertEquals(count, 9L),
+            () -> assertJobCompleted(jobExecution)
         );
     }
 
     private JobParameters getJobParameters() throws IOException {
         return new JobParametersBuilder()
-                .addJobParameter("inputFilePath", new JobParameter<>(
-                        input.getFile().getPath(), String.class, false))
-                .addJobParameter("gridSize", new JobParameter<>(3, Integer.class, false))
-                .toJobParameters();
+            .addJobParameter("inputFilePath", new JobParameter<>(
+                input.getFile().getPath(), String.class, false))
+            .addJobParameter("gridSize", new JobParameter<>(3, Integer.class, false))
+            .toJobParameters();
     }
 }

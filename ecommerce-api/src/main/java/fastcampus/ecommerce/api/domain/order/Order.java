@@ -62,7 +62,7 @@ public class Order {
     }
 
     public void initPayment(PaymentMethod paymentMethod) {
-        payment = Payment.createPayment(paymentMethod, calculateTotalAmount(), null);
+        payment = Payment.createPayment(paymentMethod, calculateTotalAmount(), this);
     }
 
     public void completePayment(boolean success) {

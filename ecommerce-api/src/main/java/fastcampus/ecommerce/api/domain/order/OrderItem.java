@@ -25,7 +25,7 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderItemId;
-    private Long terms;
+
     private Integer quantity;
     private Integer unitPrice;
     private String productId;
@@ -36,7 +36,7 @@ public class OrderItem {
     private Order order;
 
     public static OrderItem createOrderItem(String productId, Integer quantity, Integer unitPrice,
-            Order order) {
-        return new OrderItem(null, null, quantity, unitPrice, productId, order);
+        Order order) {
+        return new OrderItem(null, quantity, unitPrice, productId, order);
     }
 }

@@ -56,7 +56,7 @@ public class OrderRequester {
 
                 for (JsonNode productNode : contentNode) {
                     // 필드 조회
-                    String productId = productNode.get("id").asText();
+                    String productId = productNode.get("productId").asText();
                     int stockQuantity = productNode.get("stockQuantity").asInt();
                     // 주문 요청 시도(future)
                     CompletableFuture<Void> future = CompletableFuture.runAsync(

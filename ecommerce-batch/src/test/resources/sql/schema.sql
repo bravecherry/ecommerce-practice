@@ -34,3 +34,49 @@ create table transaction_reports
     total_item_quantity  bigint         not null,
     primary key (transaction_date, transaction_type)
 );
+
+create table brand_reports
+(
+    stat_date              date           not null,
+    brand                  varchar(255)   not null,
+    product_count          integer        not null,
+    avg_sales_price        decimal(15, 0) not null,
+    max_sales_price        decimal(15, 0) not null,
+    min_sales_price        decimal(15, 0) not null,
+    total_stock_quantity   integer        not null,
+    avg_stock_quantity     decimal(15, 0) not null,
+    potential_sales_amount decimal(20, 0) not null,
+    primary key (stat_date, brand)
+);
+
+create table category_reports
+(
+    stat_date              date           not null,
+    category               varchar(255)   not null,
+    product_count          integer        not null,
+    avg_sales_price        decimal(15, 0) not null,
+    max_sales_price        decimal(15, 0) not null,
+    min_sales_price        decimal(15, 0) not null,
+    total_stock_quantity   integer        not null,
+    potential_sales_amount decimal(20, 0) not null,
+    primary key (stat_date, category)
+);
+
+create table manufacturer_reports
+(
+    stat_date              date           not null,
+    manufacturer           varchar(255)   not null,
+    product_count          integer        not null,
+    avg_sales_price        decimal(15, 0) not null,
+    potential_sales_amount decimal(20, 0) not null,
+    primary key (stat_date, manufacturer)
+);
+
+create table product_status_reports
+(
+    stat_date          date           not null,
+    product_status     varchar(255)   not null,
+    product_count      integer        not null,
+    avg_stock_quantity decimal(15, 0) not null,
+    primary key (stat_date, product_status)
+);

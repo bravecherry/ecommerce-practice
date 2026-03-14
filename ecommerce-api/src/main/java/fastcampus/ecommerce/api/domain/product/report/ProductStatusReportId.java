@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class ProductStatusReportId implements Serializable {
 
     private LocalDate statDate;
-    private String brand;
+    private String productStatus;
 }

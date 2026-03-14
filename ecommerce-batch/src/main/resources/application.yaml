@@ -11,6 +11,13 @@ spring:
     jdbc:
       #      DB 에 batch metadata 없으면 만들고 시작 - 항상
       initialize-schema: always
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 1000
+        order_updates: true
+        order_inserts: true
 logging:
   level:
     root: INFO

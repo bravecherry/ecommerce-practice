@@ -86,7 +86,7 @@ public class ProductDownloadJobConfiguration {
         return new StepBuilder("productPagingStep", jobRepository)
             // DataSourceTransactionManager 가 아닌 이를 추상화한 PlatformTransactionManager 인터페이스를 사용하는 이유
             // 테스트 환경에서 트랜잭션 매니져를 가져올 떄나 실제로 DB에서 가져올 때 모두 동작하게 하기 위함
-            .<Product, ProductDownloadCsvRow>chunk(10000, transactionManager)
+            .<Product, ProductDownloadCsvRow>chunk(100000, transactionManager)
             .reader(productPagingReader)
             .processor(productDownloadProcessor)
             .writer(productCsvWriter)
@@ -107,7 +107,7 @@ public class ProductDownloadJobConfiguration {
             .queryString(
                 "select p from Product p where p.productId between :minId and :maxId order by p.productId")
             .parameterValues(Map.of("minId", minId, "maxId", maxId))
-            .pageSize(1000)
+            .pageSize(10000)
             .build();
     }
 

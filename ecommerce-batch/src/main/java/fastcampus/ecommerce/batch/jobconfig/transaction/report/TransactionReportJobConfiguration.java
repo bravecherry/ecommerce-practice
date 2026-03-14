@@ -56,7 +56,7 @@ public class TransactionReportJobConfiguration {
     public Step transactionAccumulatePartitionStep(JobRepository jobRepository,
         Step transactionAccumulateStep,
         SplitFilePartitioner splitLogFilePartitioner, PartitionHandler logFilePartitionHandler) {
-        return new StepBuilder("productUploadPartitionStep", jobRepository)
+        return new StepBuilder("transactionAccumulatePartitionStep", jobRepository)
             .partitioner(transactionAccumulateStep.getName(), splitLogFilePartitioner)
             .partitionHandler(logFilePartitionHandler)
             //allowStartIfComplete(true) Spring Batch에서 `return` StepBuilder을 사용하면
@@ -114,7 +114,7 @@ public class TransactionReportJobConfiguration {
     @Bean
     @StepScope
     public SynchronizedItemStreamReader<TransactionLog> logReader(
-        @Value("#{stepExecutionContext['file']}") String file, ObjectMapper objectMapper) {
+        @Value("#{stepExecutionContext['file']}") File file, ObjectMapper objectMapper) {
         FlatFileItemReader<TransactionLog> itemReader = new FlatFileItemReaderBuilder<TransactionLog>()
             .name("logReader")
             .resource(new FileSystemResource(file))
